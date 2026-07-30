@@ -6,7 +6,7 @@
   <img alt="CapitolAlpha — A statistically significant edge in 16,203 disclosed Congressional trades. QAC 420, Wesleyan." src="assets/banner-dark.svg">
 </picture>
 
-[![CI](https://github.com/Builder106/CapitolAlpha/actions/workflows/ci.yml/badge.svg)](https://github.com/Builder106/CapitolAlpha/actions/workflows/ci.yml)
+[![CI](https://github.com/Builder106/capitol-alpha/actions/workflows/ci.yml/badge.svg)](https://github.com/Builder106/capitol-alpha/actions/workflows/ci.yml)
 [![Live site](https://img.shields.io/badge/findings-live-success.svg)](https://capitolalpha.vercel.app)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Playwright](https://img.shields.io/badge/Playwright-scraping-2EAD33.svg?logo=playwright&logoColor=white)](https://playwright.dev/python/)
