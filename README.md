@@ -68,10 +68,8 @@ flowchart LR
 
 ```bash
 # 1. Environment
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-playwright install chromium
+uv sync --group dev
+uv run playwright install chromium
 
 # 2. Fetch data (Option A: scrape official sites — slow, authoritative)
 python -m pipeline.run_pipeline --use-official

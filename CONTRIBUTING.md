@@ -7,10 +7,8 @@ That said, the pipeline is open source and reusable. Bug fixes, fetcher resilien
 ## Development setup
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-playwright install chromium
+uv sync --group dev
+uv run playwright install chromium
 ```
 
 Run the full pipeline (official-source mode is slow but authoritative):

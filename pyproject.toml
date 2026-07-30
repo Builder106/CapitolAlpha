@@ -1,0 +1,25 @@
+[project]
+name = "capitol-alpha"
+version = "0.1.0"
+description = "Congressional trading & financial analysis pipeline."
+requires-python = ">=3.12"
+dependencies = [
+    "requests>=2.34.2",
+    "pandas>=3.0.3",
+    "pyyaml>=6.0.3",
+    "pdfplumber>=0.11.10",
+    "yfinance>=1.5.2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "playwright>=1.61.0",
+]
+
+[tool.uv]
+package = false
+default-groups = []
+
+[tool.setuptools]
+py-modules = []
