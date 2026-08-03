@@ -15,6 +15,17 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITLEAKS_NOTIFY_USER_LIST: ""
+
   test:
     name: Syntax + unit tests
     runs-on: ubuntu-24.04
@@ -28,6 +39,9 @@ jobs:
 
       - name: Install dependencies
         run: uv sync --frozen --group dev
+
+      - name: Python dependency audit
+        run: uv run --with pip-audit pip-audit
 
       - name: Syntax check
         run: uv run --frozen python -m compileall -q pipeline tests utils run_pipeline.py
@@ -49,6 +63,9 @@ jobs:
 
       - name: Install deps
         run: npm install --no-audit --no-fund
+
+      - name: Node dependency audit
+        run: npm audit --audit-level=high
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
