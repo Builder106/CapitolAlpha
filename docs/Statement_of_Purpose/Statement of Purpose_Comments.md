@@ -41,4 +41,3 @@
 **Reviewer**: What will the control variables be? Remember to evaluate the strengths and weaknesses of your regression models!
 
 ---
-

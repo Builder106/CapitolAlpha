@@ -51,6 +51,7 @@ Options:
 ## Output schema
 
 `data/legislative_trades.csv` columns:
+
 - chamber
 - legislator_name
 - transaction_date
