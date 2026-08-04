@@ -43,7 +43,7 @@ Pipeline-level options (`--fresh`, `--senate-only`, `--house-only`, `--use-offic
 
 The existing log uses short imperative subjects. Examples:
 
-```
+```text
 Add Final Reflection document on U.S. Congress Stock Trade Analysis
 Update flourish_captions.csv to correct date ranges and improve timeline accuracy
 Add CapitolAlpha abstract LaTeX source and compiled PDF
