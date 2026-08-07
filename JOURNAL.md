@@ -4,6 +4,10 @@
 > things happen — retrospectives need this raw material to land.
 > Reverse-chronological; one paragraph max per entry.
 
+## 2026-08-07 — Added Fama-French multi-factor risk model, disclosure monitor & methodology guide #milestone #docs
+
+Extended the financial analysis pipeline with `pipeline/fama_french.py` for CAPM and Fama-French 3-Factor risk adjustment (Market, SMB, HML) to verify that outperformance holds up against systematic factor exposure. Added `pipeline/monitor.py` for automated PTR disclosure delta tracking, created `docs/METHODOLOGY.md` documenting normalization heuristics and risk model assumptions, and expanded the unit test suite with `tests/test_pipeline_additions.py`. Verified clean test execution on `ampere-dev`.
+
 ## 2026-07-22 — Expanded test suite to 100% full coverage across pipeline & utils #milestone #decision
 
 Refactored `utils/check_covid.py`, `utils/mappings.py`, and `utils/patch_code.py` to wrap top-level executions in clean `if __name__ == '__main__':` functions, eliminating side effects during module import. Created `tests/test_utils.py` and expanded `test_house_fetcher.py`, `test_senate_fetcher.py`, `test_merge_to_csv.py`, `test_run_pipeline.py`, and `test_scrapers.py`. Achieved 47 passing assertions and 99.02% total line coverage across the repo verified on `ampere-dev`.
