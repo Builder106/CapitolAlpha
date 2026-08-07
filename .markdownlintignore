@@ -7,3 +7,5 @@
 **/.turbo/**
 **/.pytest_cache/**
 **/__pycache__/**
+**/.chat-archive/**
+**/contracts/lib/**
