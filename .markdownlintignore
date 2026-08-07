@@ -1,0 +1,9 @@
+**/node_modules/**
+**/.venv/**
+**/vendor/**
+**/dist/**
+**/build/**
+**/.next/**
+**/.turbo/**
+**/.pytest_cache/**
+**/__pycache__/**
