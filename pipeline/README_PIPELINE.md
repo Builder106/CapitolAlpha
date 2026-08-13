@@ -38,14 +38,14 @@ python -m pipeline.run_pipeline
 
 Options:
 
-- `--fresh` – Re-download API data (ignored when using `--use-official`).
+- `--fresh`– Re-download API data (ignored when using`--use-official`).
 - `--senate-only` – Only Senate (scrape or API).
 - `--house-only` – Only House (scrape or API).
-- `--use-official` – Scrape **efdsearch.senate.gov** and **disclosures-clerk.house.gov** (requires Playwright).
+- `--use-official` – Scrape **efdsearch.senate.gov**and**disclosures-clerk.house.gov** (requires Playwright).
 
 ## Data sources
 
-- **Official (--use-official):** Direct scraping of **efdsearch.senate.gov** (Senate) and **disclosures-clerk.house.gov/FinancialDisclosure** (House), as in your problem statement.
+- **Official (--use-official):**Direct scraping of**efdsearch.senate.gov**(Senate) and**disclosures-clerk.house.gov/FinancialDisclosure** (House), as in your problem statement.
 - **Fallback (default):** Pre-aggregated Senate JSON from [timothycarambat/senate-stock-watcher-data](https://github.com/timothycarambat/senate-stock-watcher-data); optional House S3 or other APIs.
 
 ## Output schema

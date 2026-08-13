@@ -67,20 +67,26 @@ flowchart LR
 ## Reproducing the analysis
 
 ```bash
+
 # 1. Environment
+
 uv sync --group dev
 uv run playwright install chromium
 
 # 2. Fetch data (Option A: scrape official sites — slow, authoritative)
+
 python -m pipeline.run_pipeline --use-official
 
 # 2b. (Option B: pre-aggregated Senate JSON — fast, fallback)
+
 python -m pipeline.run_pipeline
 
 # 3. Run tests
+
 pytest
 
 # 4. Open the analysis notebooks
+
 jupyter lab notebooks/Financial_Analysis.ipynb
 ```
 
@@ -91,7 +97,7 @@ Pipeline-level options (`--fresh`, `--senate-only`, `--house-only`) and source-f
 This is an undergraduate course project, not a quantitative-research paper. The findings are best read as a starting point that justifies a deeper study, not a final claim:
 
 - **Disclosure lag is large.** PTRs can be filed up to 30&ndash;45 days after a trade, so a 90-day alpha measured from the transaction date is *not* a 90-day alpha available to a public follower in real time. The signal is retrospective.
-- **Selection bias on the benchmarked subset.** Only **220 trades** out of 16,203 had a clean ticker, sufficient price history in `yfinance`, and a clean entry/exit window. Heavy-tail trades (private placements, fund-of-fund holdings, options) are excluded.
+- **Selection bias on the benchmarked subset.**Only**220 trades** out of 16,203 had a clean ticker, sufficient price history in `yfinance`, and a clean entry/exit window. Heavy-tail trades (private placements, fund-of-fund holdings, options) are excluded.
 - **No multiple-testing correction.** The 1-sample t-test against SPY at the 90-day horizon was the pre-registered question, but other horizons (30, 180 days) and per-legislator slices were also explored; results in those slices should be treated as exploratory.
 - **Jensen's alpha assumes CAPM**, which is a strong assumption on a 220-trade sample over a window that includes both the COVID crash and the post-2020 recovery.
 - **Ticker resolution is noisy.** PTR asset descriptions are often free-text ("Common Stock - Apple Inc.") rather than CUSIPs; the matcher resolves the obvious ones and drops the ambiguous ones.
