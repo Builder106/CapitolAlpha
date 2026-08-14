@@ -4,6 +4,10 @@
 > things happen — retrospectives need this raw material to land.
 > Reverse-chronological; one paragraph max per entry.
 
+## 2026-08-14: Accessible plain-English documentation update #decision
+
+Refactored the README headline, summary tagline, and introductory section to articulate the core civic question: whether federal politicians have an unfair trading edge over ordinary investors. Removed em dashes from intro copy and preserved all academic PDFs and statistical findings.
+
 ## 2026-08-07 — Added Fama-French multi-factor risk model, disclosure monitor & methodology guide #milestone #docs
 
 Extended the financial analysis pipeline with `pipeline/fama_french.py`for CAPM and Fama-French 3-Factor risk adjustment (Market, SMB, HML) to verify that outperformance holds up against systematic factor exposure. Added`pipeline/monitor.py`for automated PTR disclosure delta tracking, created`docs/METHODOLOGY.md`documenting normalization heuristics and risk model assumptions, and expanded the unit test suite with`tests/test_pipeline_additions.py`. Verified clean test execution on `ampere-dev`.

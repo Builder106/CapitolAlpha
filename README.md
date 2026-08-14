@@ -3,7 +3,7 @@
   <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.svg" type="image/svg+xml">
   <source media="(prefers-color-scheme: dark)"  srcset="assets/banner-dark.png">
   <source media="(prefers-color-scheme: light)" srcset="assets/banner-light.png">
-  <img alt="CapitolAlpha — A statistically significant edge in 16,203 disclosed Congressional trades. QAC 420, Wesleyan." src="assets/banner-dark.svg">
+  <img alt="CapitolAlpha: A statistically significant edge in 16,203 disclosed Congressional trades" src="assets/banner-dark.svg">
 </picture>
 
 [![CI](https://github.com/Builder106/capitol-alpha/actions/workflows/ci.yml/badge.svg)](https://github.com/Builder106/capitol-alpha/actions/workflows/ci.yml)
@@ -13,13 +13,19 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](#license)
 [![Course](https://img.shields.io/badge/Wesleyan-QAC%20420-CC0000.svg)](https://www.wesleyan.edu/qac/)
 
-> Members of Congress disclosed **16,203 stock trades** between 2020 and 2024. Their *purchases* beat the S&P 500 by an average of **+2.58%** over the following 90 days &mdash; statistically significant at p&nbsp;<&nbsp;0.05. This repo is the end-to-end pipeline behind that finding.
+> **Analyzing whether Congressional stock trades beat the market.** An open research pipeline tracking 16,000 politician stock disclosures against the S&P 500.
 
-**Findings page:** [capitolalpha.vercel.app](https://capitolalpha.vercel.app) &mdash; the headline stat, the four charts, and the PDFs in one place. The Python pipeline that produced them lives in this repo.
+## 💡 What is CapitolAlpha?
 
-## What this is
+Do members of Congress make better stock market trades than ordinary investors? CapitolAlpha is an open data pipeline that automatically collects and analyzes over 16,000 stock trades reported by federal politicians. It compares their financial returns against the general stock market (S&P 500) to determine whether politicians have an abnormal trading advantage.
 
-A semester project for **QAC 420 &mdash; *Data for Good*** at Wesleyan University. The course's frame is using public data to answer questions of civic accountability; this project asks one of the oldest of them: *do federal legislators have an investing edge they shouldn't?*
+Members of Congress disclosed **16,203 stock trades** between 2020 and 2024. Their *purchases* beat the S&P 500 by an average of **+2.58%** over the following 90 days (statistically significant at p < 0.05). This repository contains the end-to-end pipeline behind that finding.
+
+**Findings page:** [capitolalpha.vercel.app](https://capitolalpha.vercel.app) (the headline statistics, interactive charts, and formal writeup in one place).
+
+## 🛠 Project Overview
+
+A semester project for **QAC 420 (Data for Good)** at Wesleyan University using public data for civic accountability.
 
 The answer is a reproducible Python pipeline that:
 
