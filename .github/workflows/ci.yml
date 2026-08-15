@@ -44,6 +44,9 @@ jobs:
       - name: Python dependency audit
         run: uv run --with pip-audit pip-audit
 
+      - name: License compliance check
+        run: uv run --with pip-licenses pip-licenses --fail-on="AGPL;GPL"
+
       - name: Syntax check
         run: uv run --frozen python -m compileall -q pipeline tests utils run_pipeline.py
 
