@@ -6,16 +6,27 @@ risk-adjusted excess returns for disclosed Congressional stock purchases.
 """
 
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import TypedDict
 import pandas as pd
 import numpy as np
+
+
+class FactorAdjustedAlphaResult(TypedDict):
+    n_trades: int
+    mean_trade_roi: float
+    benchmark_mean_roi: float
+    capm_alpha: float
+    fama_french_alpha: float
+    t_statistic: float
+    p_value: float
+    statistically_significant: bool
 
 
 def compute_factor_adjusted_alpha(
     trades_df: pd.DataFrame,
     benchmark_returns: pd.Series,
     rf_rate: float = 0.04
-) -> Dict[str, Any]:
+) -> FactorAdjustedAlphaResult:
     """
     Computes single-factor CAPM alpha and multi-factor statistics for trade returns.
 
@@ -34,6 +45,8 @@ def compute_factor_adjusted_alpha(
             "mean_trade_roi": 0.0,
             "benchmark_mean_roi": 0.0,
             "capm_alpha": 0.0,
+            "fama_french_alpha": 0.0,
+            "t_statistic": 0.0,
             "p_value": 1.0,
             "statistically_significant": False,
         }
@@ -46,6 +59,8 @@ def compute_factor_adjusted_alpha(
             "mean_trade_roi": 0.0,
             "benchmark_mean_roi": 0.0,
             "capm_alpha": 0.0,
+            "fama_french_alpha": 0.0,
+            "t_statistic": 0.0,
             "p_value": 1.0,
             "statistically_significant": False,
         }

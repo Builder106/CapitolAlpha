@@ -6,11 +6,20 @@ checks data hygiene, and calculates summary metrics on recent PTR filings.
 """
 
 from pathlib import Path
-from typing import Dict, Any
+from typing import TypedDict
 import pandas as pd
 
 
-def analyze_trade_deltas(csv_path: Path) -> Dict[str, Any]:
+class TradeDeltaAnalysis(TypedDict, total=False):
+    status: str
+    message: str
+    total_rows: int
+    unique_legislators: int
+    date_range: str
+    trade_types: dict[str, int]
+
+
+def analyze_trade_deltas(csv_path: Path) -> TradeDeltaAnalysis:
     """
     Reads legislative trades CSV and calculates dataset health and delta metrics.
 

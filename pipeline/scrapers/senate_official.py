@@ -1,20 +1,49 @@
 from datetime import datetime
-from typing import Any
+from types import TracebackType
+from typing import TypedDict
 
 import pandas as pd
 
 try:
-    from playwright.sync_api import sync_playwright
+    from playwright.sync_api import Browser, BrowserContext, Page, Playwright, sync_playwright
     has_playwright = True
 except ImportError:
     sync_playwright = None  # type: ignore[assignment]
     has_playwright = False
+    Playwright = object  # type: ignore[assignment, misc]
+    Browser = object  # type: ignore[assignment, misc]
+    BrowserContext = object  # type: ignore[assignment, misc]
+    Page = object  # type: ignore[assignment, misc]
 
 from ..config import MIN_YEAR, MAX_YEAR
 
 SENATE_BASE = "https://efdsearch.senate.gov"
 SENATE_SEARCH = f"{SENATE_BASE}/search/"
 PTR_REPORT_TYPE_VALUE = "11"
+
+
+class SenateTransaction(TypedDict):
+    chamber: str
+    legislator_name: str
+    disclosure_date: str
+    transaction_date: str
+    ticker: str | None
+    asset_description: str | None
+    asset_type: str | None
+    transaction_type: str | None
+    amount_range: str | None
+    owner: str | None
+    ptr_link: str
+    comment: str | None
+
+
+class SenateSearchResult(TypedDict):
+    first_name: str
+    last_name: str
+    office: str
+    report_type: str
+    date: str
+    report_url: str
 
 
 def _parse_date(s: str) -> int | None:
@@ -29,11 +58,11 @@ def _parse_date(s: str) -> int | None:
 
 
 def _normalize_senate_row(
-    raw: dict[str, Any],
+    raw: dict[str, str],
     legislator_name: str,
     disclosure_date: str,
     ptr_link: str,
-) -> dict[str, Any]:
+) -> SenateTransaction:
     return {
         "chamber": "Senate",
         "legislator_name": legislator_name,
@@ -55,10 +84,10 @@ class SenateOfficialScraper:
         if not has_playwright:
             raise RuntimeError("Playwright is required. Install with: pip install playwright && playwright install")
         self._headless = headless
-        self._playwright: Any = None
-        self._browser: Any = None
-        self._context: Any = None
-        self._page: Any = None
+        self._playwright: Playwright | None = None
+        self._browser: Browser | None = None
+        self._context: BrowserContext | None = None
+        self._page: Page | None = None
         self._agreement_accepted = False
 
     def __enter__(self) -> "SenateOfficialScraper":
@@ -71,7 +100,12 @@ class SenateOfficialScraper:
         self._page = self._context.new_page()
         return self
 
-    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+    def __exit__(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: TracebackType | None,
+    ) -> None:
         if self._page:
             self._page.close()
         if self._context:
@@ -90,7 +124,7 @@ class SenateOfficialScraper:
             self._page.wait_for_url(SENATE_SEARCH, timeout=10000)
         self._agreement_accepted = True
 
-    def _search_ptr_by_date_range(self, start_date: str, end_date: str) -> list[dict[str, Any]]:
+    def _search_ptr_by_date_range(self, start_date: str, end_date: str) -> list[SenateSearchResult]:
         self._page.wait_for_selector("#searchForm", state="visible", timeout=10000)
         self._page.fill("#fromDate", start_date)
         self._page.fill("#toDate", end_date)
@@ -109,8 +143,8 @@ class SenateOfficialScraper:
             return []
         return self._extract_search_page_results()
 
-    def _extract_search_page_results(self) -> list[dict[str, Any]]:
-        results: list[dict[str, Any]] = []
+    def _extract_search_page_results(self) -> list[SenateSearchResult]:
+        results: list[SenateSearchResult] = []
         while True:
             rows = self._page.query_selector_all("#filedReports tbody tr")
             for row in rows:
@@ -140,7 +174,7 @@ class SenateOfficialScraper:
             self._page.wait_for_selector("#filedReports_processing", state="hidden", timeout=15000)
         return results
 
-    def _scrape_ptr_transactions(self, report_url: str, legislator_name: str, disclosure_date: str) -> list[dict[str, Any]]:
+    def _scrape_ptr_transactions(self, report_url: str, legislator_name: str, disclosure_date: str) -> list[SenateTransaction]:
         self._page.goto(report_url)
         self._page.wait_for_load_state("networkidle")
         section = self._page.query_selector("section.card")
@@ -150,10 +184,10 @@ class SenateOfficialScraper:
         if not table:
             return []
         headers = [th.inner_text().strip().lower().replace(" ", "_") for th in table.query_selector_all("thead th")]
-        rows_data: list[dict[str, Any]] = []
+        rows_data: list[dict[str, str]] = []
         for tr in table.query_selector_all("tbody tr"):
             cells = tr.query_selector_all("td")
-            row: dict[str, Any] = {}
+            row: dict[str, str] = {}
             for i, h in enumerate(headers):
                 if i < len(cells):
                     row[h] = cells[i].inner_text().strip()
@@ -172,7 +206,7 @@ class SenateOfficialScraper:
         start_date = f"01/01/{start_year}"
         end_date = f"12/31/{end_year}"
         ptr_list = self._search_ptr_by_date_range(start_date, end_date)
-        all_rows: list[dict[str, Any]] = []
+        all_rows: list[SenateTransaction] = []
         for item in ptr_list:
             name = f"{item.get('first_name', '')} {item.get('last_name', '')}".strip()
             date = item.get("date") or ""

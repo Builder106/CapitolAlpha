@@ -3,11 +3,23 @@ import requests
 import tempfile
 import pdfplumber
 import logging
-from typing import List, Dict, Any
+from typing import TypedDict
 
 logger = logging.getLogger(__name__)
 
-def parse_house_pdf(pdf_url: str) -> List[Dict[str, Any]]:
+
+class HousePdfTransaction(TypedDict):
+    asset_description: str
+    ticker: str | None
+    transaction_type: str
+    transaction_date: str
+    disclosure_date: str
+    amount_range: str
+    owner: str
+    ptr_link: str
+
+
+def parse_house_pdf(pdf_url: str) -> list[HousePdfTransaction]:
     """
     Downloads and parses a House Financial Disclosure or PTR PDF.
     Extracts transaction tables and maps them to row dictionaries.
@@ -23,7 +35,7 @@ def parse_house_pdf(pdf_url: str) -> List[Dict[str, Any]]:
         logger.error(f"Failed to download PDF {pdf_url}: {e}")
         return []
 
-    transactions = []
+    transactions: list[HousePdfTransaction] = []
     
     with tempfile.NamedTemporaryFile(suffix=".pdf") as tmp:
         tmp.write(response.content)
@@ -48,7 +60,7 @@ def parse_house_pdf(pdf_url: str) -> List[Dict[str, Any]]:
                         continue
                     
                     # Find column indices
-                    col_map = {}
+                    col_map: dict[str, int] = {}
                     for i, h in enumerate(headers):
                         if 'owner' in h: col_map['owner'] = i
                         elif 'asset' in h: col_map['asset'] = i
@@ -67,7 +79,7 @@ def parse_house_pdf(pdf_url: str) -> List[Dict[str, Any]]:
                             continue
                             
                         # Extract basic info, with safety bounds
-                        def get_col(name):
+                        def get_col(name: str) -> str:
                             if name in col_map and col_map[name] < len(row) and row[col_map[name]]:
                                 return str(row[col_map[name]]).replace('\n', ' ').strip()
                             return ""
