@@ -27,7 +27,6 @@ def parse_house_pdf(pdf_url: str) -> list[HousePdfTransaction]:
     if not pdf_url.lower().endswith(".pdf"):
         return []
     
-    # Download the PDF using a temporary file
     try:
         response = requests.get(pdf_url, timeout=30)
         response.raise_for_status()
@@ -44,7 +43,6 @@ def parse_house_pdf(pdf_url: str) -> list[HousePdfTransaction]:
         try:
             with pdfplumber.open(tmp.name) as pdf:
                 for page in pdf.pages:
-                    # Find tables on the page
                     table = page.extract_table()
                     if not table:
                         continue
@@ -73,7 +71,6 @@ def parse_house_pdf(pdf_url: str) -> list[HousePdfTransaction]:
                     if 'asset' not in col_map or 'amount' not in col_map:
                         continue
                         
-                    # Parse rows
                     for row in table[1:]:
                         if not any(row):  # Skip empty rows
                             continue
