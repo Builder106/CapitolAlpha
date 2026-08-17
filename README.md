@@ -56,16 +56,16 @@ The full statistical workup &mdash; t-statistic, confidence interval, Sharpe rat
 
 ```mermaid
 flowchart LR
-  senate[efdsearch.senate.gov<br/>Senate PTRs] --> sf[senate_fetcher.py<br/>Playwright + HTML parse]
-  house[disclosures-clerk.house.gov<br/>House PTR PDFs] --> hf[house_fetcher.py<br/>Playwright + pdfplumber]
-  sf --> merge[merge_to_csv.py<br/>normalize + dedupe]
+  senate["efdsearch.senate.gov<br/>Senate PTRs"] --> sf["senate_fetcher.py<br/>Playwright + HTML parse"]
+  house["disclosures-clerk.house.gov<br/>House PTR PDFs"] --> hf["house_fetcher.py<br/>Playwright + pdfplumber"]
+  sf --> merge["merge_to_csv.py<br/>normalize + dedupe"]
   hf --> merge
-  merge --> csv[(data/legislative_trades.csv<br/>16,203 rows × 18 cols)]
-  csv --> eda[notebooks/EDA.ipynb<br/>descriptive stats]
-  csv --> fin[notebooks/Financial_Analysis.ipynb]
-  yf[yfinance<br/>SPY + ticker prices] --> fin
-  fin --> alpha[Jensen's alpha<br/>1-sample t-test<br/>Sharpe + KDE]
-  alpha --> deliverables[abstract.pdf<br/>Final_Reflection.pdf<br/>Presentation deck]
+  merge --> csv[("data/legislative_trades.csv<br/>16,203 rows × 18 cols")]
+  csv --> eda["notebooks/EDA.ipynb<br/>descriptive stats"]
+  csv --> fin["notebooks/Financial_Analysis.ipynb"]
+  yf["yfinance<br/>SPY + ticker prices"] --> fin
+  fin --> alpha["Jensen's alpha<br/>1-sample t-test<br/>Sharpe + KDE"]
+  alpha --> deliverables["abstract.pdf<br/>Final_Reflection.pdf<br/>Presentation deck"]
 ```
 
 [`run_pipeline.py`](run_pipeline.py) is the orchestration entry point; the per-step modules live in [`pipeline/`](pipeline/). Unit tests for the fetchers and merge step are in [`tests/`](tests/).
