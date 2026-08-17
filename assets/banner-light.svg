@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="1200" height="420" viewBox="0 0 1200 420" xmlns="http://www.w3.org/2000/svg">
   <rect width="1200" height="420" fill="#fbfcfd"/>
-  <rect x="0" y="0" width="6" height="420" fill="#0c8aa3"/>
+  <rect x="0" y="0" width="1200" height="4" fill="#0c8aa3"/>
 
-  <text x="64" y="76" font-family="Helvetica, Arial, sans-serif" font-size="13" letter-spacing="2.8" fill="#6b7a96" font-weight="700">WESLEYAN QAC 420 &#183; DATA FOR GOOD</text>
+  <text x="64" y="76" font-family="Helvetica, Arial, sans-serif" font-size="13" letter-spacing="2.8" fill="#6b7a96" font-weight="700">WESLEYAN QAC 420 | DATA FOR GOOD</text>
 
   <text x="64" y="170" font-family="Helvetica, Arial, sans-serif" font-size="64" font-weight="700" fill="#0c1525" letter-spacing="-0.012em">CapitolAlpha</text>
 
