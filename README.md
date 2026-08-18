@@ -29,85 +29,79 @@ A semester project for **QAC 420 (Data for Good)** at Wesleyan University using 
 
 The answer is a reproducible Python pipeline that:
 
-1. Scrapes Senate Periodic Transaction Reports (PTRs) directly from **efdsearch.senate.gov** (Playwright + form automation).
-2. Scrapes House PTR PDFs from **disclosures-clerk.house.gov** (Playwright + `pdfplumber` table extraction).
-3. Normalizes both chambers into a unified `legislative_trades.csv` (18 columns, 16,203 rows for 2020&ndash;2024).
-4. Pulls market data via `yfinance` and computes Jensen's alpha, rolling 30/90/180-day returns, and a one-sample t-test against the S&P 500 benchmark.
+1. Scrapes Senate stock disclosure reports (Periodic Transaction Reports) directly from **efdsearch.senate.gov** using automated browser scripts.
+2. Extracts House disclosure PDFs from **disclosures-clerk.house.gov** via table extraction tools.
+3. Normalizes filings from both chambers into a single unified dataset (`legislative_trades.csv` with 16,203 rows across 2020 to 2024).
+4. Pulls historical market prices via Yahoo Finance and calculates risk-adjusted excess returns (Jensen's alpha) over 30, 90, and 180-day holding periods compared to the S&P 500.
 
 Full deliverables:
 
-- **[Abstract](docs/abstract/abstract.pdf)** &mdash; 1-page academic abstract.
-- **[Final Reflection](docs/Final_Reflection/Final_Reflection.pdf)** &mdash; 5-page essay on method, ethics, and future work.
-- **[Statistics writeup](docs/statistics/statistics.pdf)** &mdash; the formal statistical workup behind the Jensen's-alpha number.
+- **[Abstract](docs/abstract/abstract.pdf)**: 1-page academic abstract.
+- **[Final Reflection](docs/Final_Reflection/Final_Reflection.pdf)**: 5-page essay on methodology, ethics, and future research.
+- **[Statistics writeup](docs/statistics/statistics.pdf)**: Formal statistical workup behind the market-outperformance findings.
 
 ## Key findings
 
-| Metric | Congressional purchases | S&P 500 (benchmark) | Effect |
+| Metric | Congressional purchases | S&P 500 (market benchmark) | Effect |
 | --- | --- | --- | --- |
-| Mean 90-day buy-and-hold ROI | **13.74%** | ~11.16% | +2.58 pp |
-| **Jensen's alpha (90-day)** | &mdash; | &mdash; | **+2.58%** (p&nbsp;<&nbsp;0.05) |
-| Pre-crash sell concentration | Top **5%** of sellers timed COVID exits before Feb&nbsp;20,&nbsp;2020 | &mdash; | suggestive, not causal |
-| Trades analyzed | **220 benchmarkable purchases** out of 16,203 raw rows | &mdash; | &mdash; |
-| Window | 2020-01-01 &ndash; 2024-12-31 | &mdash; | covers COVID + recovery |
+| Average 90-day return on investment | **13.74%** | ~11.16% | +2.58 percentage points |
+| **Risk-adjusted excess return (Jensen's alpha)** | — | — | **+2.58%** (statistically significant, p < 0.05) |
+| Pre-crash sell concentration | Top **5%** of sellers timed market exits before Feb 20, 2020 | — | Suggestive of timing, not definitive proof of cause |
+| Analyzed trades | **220 benchmarkable purchases** out of 16,203 raw rows | — | Strict criteria requiring clear public ticker symbols |
+| Time window | 2020-01-01 to 2024-12-31 | — | Spans the COVID-19 market drop and recovery |
 
-The full statistical workup &mdash; t-statistic, confidence interval, Sharpe ratio, and the KDE of returns &mdash; is in [`notebooks/Financial_Analysis.ipynb`](notebooks/Financial_Analysis.ipynb).
+*Note on terms:* **Jensen's alpha** measures how much an investment outperformed what would normally be expected given its market risk. A positive value (+2.58%) indicates that politician purchases gained more than expected compared to the general stock market.
+
+The statistical details (t-statistics, confidence intervals, risk-adjusted Sharpe ratios, and return distributions) are available in [`notebooks/Financial_Analysis.ipynb`](notebooks/Financial_Analysis.ipynb).
 
 ## Pipeline
 
 ```mermaid
 flowchart LR
-  senate["efdsearch.senate.gov<br/>Senate PTRs"] --> sf["senate_fetcher.py<br/>Playwright + HTML parse"]
-  house["disclosures-clerk.house.gov<br/>House PTR PDFs"] --> hf["house_fetcher.py<br/>Playwright + pdfplumber"]
+  senate["efdsearch.senate.gov<br/>Senate Filings"] --> sf["senate_fetcher.py<br/>Playwright + HTML parse"]
+  house["disclosures-clerk.house.gov<br/>House Filings"] --> hf["house_fetcher.py<br/>Playwright + pdfplumber"]
   sf --> merge["merge_to_csv.py<br/>normalize + dedupe"]
   hf --> merge
   merge --> csv[("data/legislative_trades.csv<br/>16,203 rows × 18 cols")]
   csv --> eda["notebooks/EDA.ipynb<br/>descriptive stats"]
   csv --> fin["notebooks/Financial_Analysis.ipynb"]
   yf["yfinance<br/>SPY + ticker prices"] --> fin
-  fin --> alpha["Jensen's alpha<br/>1-sample t-test<br/>Sharpe + KDE"]
+  fin --> alpha["Jensen's alpha<br/>Statistical Tests<br/>Sharpe + Distribution"]
   alpha --> deliverables["abstract.pdf<br/>Final_Reflection.pdf<br/>Presentation deck"]
 ```
 
-[`run_pipeline.py`](run_pipeline.py) is the orchestration entry point; the per-step modules live in [`pipeline/`](pipeline/). Unit tests for the fetchers and merge step are in [`tests/`](tests/).
+[`run_pipeline.py`](run_pipeline.py) orchestrates data extraction; individual modules live in [`pipeline/`](pipeline/). Automated tests for data extractors and data cleaning are in [`tests/`](tests/).
 
 ## Reproducing the analysis
 
 ```bash
-
-# 1. Environment
-
+# 1. Setup environment
 uv sync --group dev
 uv run playwright install chromium
 
-# 2. Fetch data (Option A: scrape official sites — slow, authoritative)
-
+# 2. Fetch data (Option A: scrape official sites)
 python -m pipeline.run_pipeline --use-official
 
-# 2b. (Option B: pre-aggregated Senate JSON — fast, fallback)
-
+# 2b. (Option B: pre-aggregated dataset fallback)
 python -m pipeline.run_pipeline
 
-# 3. Run tests
-
+# 3. Run test suite
 pytest
 
 # 4. Open the analysis notebooks
-
 jupyter lab notebooks/Financial_Analysis.ipynb
 ```
 
-Pipeline-level options (`--fresh`, `--senate-only`, `--house-only`) and source-fallback behavior are documented in [`pipeline/README_PIPELINE.md`](pipeline/README_PIPELINE.md).
+Pipeline options (`--fresh`, `--senate-only`, `--house-only`) and fallback settings are documented in [`pipeline/README_PIPELINE.md`](pipeline/README_PIPELINE.md).
 
-## Caveats
+## Research caveats
 
-This is an undergraduate course project, not a quantitative-research paper. The findings are best read as a starting point that justifies a deeper study, not a final claim:
+This is an academic study based on public filings. The findings are best read as an exploratory investigation:
 
-- **Disclosure lag is large.** PTRs can be filed up to 30&ndash;45 days after a trade, so a 90-day alpha measured from the transaction date is *not* a 90-day alpha available to a public follower in real time. The signal is retrospective.
-- **Selection bias on the benchmarked subset.**Only**220 trades** out of 16,203 had a clean ticker, sufficient price history in `yfinance`, and a clean entry/exit window. Heavy-tail trades (private placements, fund-of-fund holdings, options) are excluded.
-- **No multiple-testing correction.** The 1-sample t-test against SPY at the 90-day horizon was the pre-registered question, but other horizons (30, 180 days) and per-legislator slices were also explored; results in those slices should be treated as exploratory.
-- **Jensen's alpha assumes CAPM**, which is a strong assumption on a 220-trade sample over a window that includes both the COVID crash and the post-2020 recovery.
-- **Ticker resolution is noisy.** PTR asset descriptions are often free-text ("Common Stock - Apple Inc.") rather than CUSIPs; the matcher resolves the obvious ones and drops the ambiguous ones.
-- **Causality is unidentified.** Outperformance is consistent with non-public information, but it is also consistent with sector concentration, age/wealth effects, or skilled advisors. The data here cannot distinguish them.
+- **Filing delay:** Politicians can disclose trades up to 30 to 45 days after they happen, meaning the public cannot copy these trades in real time.
+- **Sample selection:** Only 220 trades out of 16,203 had clear stock ticker symbols and reliable price data across the analysis window. Private investments, real estate, and derivatives were excluded.
+- **Statistical assumptions:** The risk adjustment model assumes standard market pricing models, which may vary during volatile periods like the early COVID pandemic.
+- **Correlation vs. causation:** Beating the market can happen for multiple reasons, including personal wealth advisors, sector choices, or general market trends. The data shows correlation, not proof of insider knowledge.
 
 The [Final Reflection PDF](docs/Final_Reflection/Final_Reflection.pdf) expands on all of these.
 
