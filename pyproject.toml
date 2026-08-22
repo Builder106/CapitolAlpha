@@ -25,6 +25,12 @@ default-groups = []
 [tool.setuptools]
 py-modules = []
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    "error",
+    "ignore:.*found in sys.modules after import of package.*:RuntimeWarning",
+]
+
 [tool.ruff]
 target-version = "py312"
 line-length = 100
