@@ -51,7 +51,9 @@ jobs:
         run: uv run --frozen python -m compileall -q pipeline tests utils run_pipeline.py
 
       - name: Unit tests
-        run: uv run --frozen pytest -q
+        env:
+          PYTHONWARNINGS: "error"
+        run: uv run --frozen pytest -q -W error
 
   playwright:
     name: E2E tests (Playwright BDD)
