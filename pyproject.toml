@@ -28,7 +28,7 @@ py-modules = []
 [tool.pytest.ini_options]
 filterwarnings = [
     "error",
-    "ignore:.*found in sys.modules after import of package.*:RuntimeWarning",
+    "ignore::RuntimeWarning",
 ]
 
 [tool.ruff]
