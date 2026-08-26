@@ -48,7 +48,7 @@ jobs:
         run: uv run --with pip-licenses pip-licenses --fail-on="AGPL;GPL"
 
       - name: Lint with Ruff
-        run: uv run --frozen ruff check .
+        run: uv run --with ruff ruff check .
 
       - name: Type check (pyright)
         run: uv run --with pyright pyright

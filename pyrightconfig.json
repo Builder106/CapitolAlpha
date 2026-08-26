@@ -1,0 +1,10 @@
+{
+  "reportMissingTypeStubs": false,
+  "reportMissingImports": false,
+  "include": [
+    "pipeline",
+    "tests",
+    "utils",
+    "run_pipeline.py"
+  ]
+}
