@@ -34,7 +34,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@v10
         with:
           enable-cache: true
 
@@ -47,6 +47,12 @@ jobs:
       - name: License compliance check
         run: uv run --with pip-licenses pip-licenses --fail-on="AGPL;GPL"
 
+      - name: Lint with Ruff
+        run: uv run --frozen ruff check .
+
+      - name: Type check (pyright)
+        run: uv run --with pyright pyright
+
       - name: Syntax check
         run: uv run --frozen python -m compileall -q pipeline tests utils run_pipeline.py
 
@@ -57,6 +63,7 @@ jobs:
 
   playwright:
     name: E2E tests (Playwright BDD)
+    needs: test
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
