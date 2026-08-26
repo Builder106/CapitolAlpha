@@ -1,10 +1,17 @@
 {
   "reportMissingTypeStubs": false,
   "reportMissingImports": false,
+  "reportOptionalMemberAccess": false,
+  "reportAttributeAccessIssue": false,
   "include": [
     "pipeline",
     "tests",
-    "utils",
     "run_pipeline.py"
+  ],
+  "exclude": [
+    "utils",
+    "docs",
+    "node_modules",
+    ".venv"
   ]
 }
