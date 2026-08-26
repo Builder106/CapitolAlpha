@@ -6,6 +6,13 @@ node_modules/
 .features-gen/
 playwright-report/
 test-results/
+
+# LaTeX build artifacts produced beside rendered documents
+docs/**/*.aux
+docs/**/*.log
+docs/**/*.out
+docs/**/missfont.log
+
 Syllabus_Latest.pdf
 Presentations
 presentation_guide.md
