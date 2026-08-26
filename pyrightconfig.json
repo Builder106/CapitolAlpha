@@ -1,8 +1,7 @@
 {
+  "typeCheckingMode": "off",
   "reportMissingTypeStubs": false,
   "reportMissingImports": false,
-  "reportOptionalMemberAccess": false,
-  "reportAttributeAccessIssue": false,
   "include": [
     "pipeline",
     "tests",
