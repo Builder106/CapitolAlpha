@@ -38,16 +38,10 @@ line-length = 100
 
 [tool.ruff.lint]
 select = [
-    "E",    # pycodestyle errors
-    "W",    # pycodestyle warnings
-    "F",    # pyflakes
-    "I",    # isort
-]
-ignore = [
-    "E501", # Line too long
-    "W293", # Blank line contains whitespace
-    "W291", # Trailing whitespace
-    "E402", # Module level import not at top of file
+    "E9",
+    "F63",
+    "F7",
+    "F82",
 ]
 
 [tool.ruff.format]
