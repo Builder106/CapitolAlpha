@@ -1,6 +1,11 @@
+*.log
 .venv/
 __pycache__/
 *.pyc
+.pytest_cache/
+.coverage
+.mypy_cache/
+.ruff_cache/
 node_modules/
 .features-gen/
 playwright-report/
