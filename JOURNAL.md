@@ -4,6 +4,10 @@
 > things happen — retrospectives need this raw material to land.
 > Reverse-chronological; one paragraph max per entry.
 
+## 2026-08-29: Gate the active Vercel project by branch #decision
+
+The active Vercel project uses `site` as its root, so `site/vercel.json` now blocks all Git-triggered deployments except `main` and `staging`. `main` remains the Production Branch and `staging` is the only Preview branch.
+
 ## 2026-08-14: Accessible plain-English documentation update #decision
 
 Refactored the README headline, summary tagline, and introductory section to articulate the core civic question: whether federal politicians have an unfair trading edge over ordinary investors. Removed em dashes from intro copy and preserved all academic PDFs and statistical findings.
