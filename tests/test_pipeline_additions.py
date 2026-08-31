@@ -108,7 +108,11 @@ def test_monitor_main():
 
 
 def test_run_pipeline_main_execution(tmp_path):
-    rp_path = str(Path(__file__).parent.parent / "pipeline" / "run_pipeline.py")
+    from pipeline.run_pipeline import main as run_pipeline_main
+    import subprocess
+    # Test __main__ guard with module execution
+    subprocess.run([sys.executable, "-m", "pipeline.run_pipeline", "--help"], check=True)
+
     with patch("sys.argv", ["run_pipeline.py", "--senate-only"]):
         with patch("pipeline.senate_fetcher.SENATE_JSON_PATH") as mock_sen_path:
             with patch("pipeline.house_fetcher.HOUSE_JSON_PATH") as mock_house_path:
@@ -122,7 +126,7 @@ def test_run_pipeline_main_execution(tmp_path):
                             with patch("pipeline.senate_fetcher.get_senate_df", return_value=pd.DataFrame([{"chamber": "Senate"}])):
                                 with patch("pipeline.run_pipeline.get_senate_df", return_value=pd.DataFrame([{"chamber": "Senate"}])):
                                     with patch("pandas.DataFrame.to_csv"):
-                                        runpy.run_path(rp_path, run_name="__main__")
+                                        run_pipeline_main()
 
 
 
