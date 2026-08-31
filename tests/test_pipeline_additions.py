@@ -64,12 +64,10 @@ def test_fama_french_main(tmp_path, monkeypatch):
         # Run with existing CSV
         with patch.object(Path, "exists", return_value=True):
             with patch("pandas.read_csv", return_value=pd.DataFrame({"roi_90d": [0.1]})):
-                sys.modules.pop("pipeline.fama_french", None)
                 runpy.run_module("pipeline.fama_french", run_name="__main__")
 
         # Run when file not found
         with patch.object(Path, "exists", return_value=False):
-            sys.modules.pop("pipeline.fama_french", None)
             runpy.run_module("pipeline.fama_french", run_name="__main__")
 
 
@@ -104,17 +102,25 @@ def test_analyze_trade_deltas(tmp_path):
 def test_monitor_main():
     with patch("pandas.read_csv", return_value=pd.DataFrame({"member_name": ["Alice"], "transaction_date": ["2024-01-01"], "type": ["Purchase"]})):
         with patch.object(Path, "exists", return_value=True):
-            sys.modules.pop("pipeline.monitor", None)
             runpy.run_module("pipeline.monitor", run_name="__main__")
 
 
-def test_run_pipeline_main_execution():
+def test_run_pipeline_main_execution(tmp_path):
     with patch("sys.argv", ["run_pipeline.py", "--senate-only"]):
-        with patch("pipeline.run_pipeline.SENATE_JSON_PATH") as mock_path:
-            mock_path.exists.return_value = True
-            with patch("pipeline.run_pipeline.get_senate_df", return_value=pd.DataFrame([{"chamber": "Senate"}])):
-                sys.modules.pop("pipeline.run_pipeline", None)
-                runpy.run_module("pipeline.run_pipeline", run_name="__main__")
+        with patch("pipeline.senate_fetcher.SENATE_JSON_PATH") as mock_sen_path:
+            with patch("pipeline.house_fetcher.HOUSE_JSON_PATH") as mock_house_path:
+                with patch("pipeline.run_pipeline.SENATE_JSON_PATH") as mock_path:
+                    with patch("pipeline.run_pipeline.HOUSE_JSON_PATH") as mock_h_path:
+                        with patch("pipeline.run_pipeline.DATA_DIR", tmp_path):
+                            mock_sen_path.exists.return_value = True
+                            mock_house_path.exists.return_value = True
+                            mock_path.exists.return_value = True
+                            mock_h_path.exists.return_value = True
+                            with patch("pipeline.senate_fetcher.get_senate_df", return_value=pd.DataFrame([{"chamber": "Senate"}])):
+                                with patch("pipeline.run_pipeline.get_senate_df", return_value=pd.DataFrame([{"chamber": "Senate"}])):
+                                    with patch("pandas.DataFrame.to_csv"):
+                                        runpy.run_module("pipeline.run_pipeline", run_name="__main__")
+
 
 
 def test_scrapers_import_playwright_fallback():
