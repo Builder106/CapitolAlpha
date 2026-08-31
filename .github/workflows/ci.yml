@@ -56,10 +56,10 @@ jobs:
       - name: Syntax check
         run: uv run --frozen python -m compileall -q pipeline tests utils run_pipeline.py
 
-      - name: Unit tests
+      - name: Unit tests with coverage
         env:
           PYTHONWARNINGS: "error"
-        run: uv run --frozen pytest -q -W error
+        run: uv run --frozen pytest -v -W error
 
   playwright:
     name: E2E tests (Playwright BDD)
