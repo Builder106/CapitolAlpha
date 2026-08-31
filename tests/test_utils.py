@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 import pytest
 from utils.check_covid import run_check_covid
