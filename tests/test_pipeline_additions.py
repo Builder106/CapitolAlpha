@@ -59,16 +59,17 @@ def test_compute_factor_adjusted_alpha_empty_or_missing_column():
 
 def test_fama_french_main(tmp_path, monkeypatch):
     # Test __main__ block when data file exists and when it does not
+    ff_path = str(Path(__file__).parent.parent / "pipeline" / "fama_french.py")
     with patch("pipeline.fama_french.compute_factor_adjusted_alpha") as mock_calc:
         mock_calc.return_value = {"n_trades": 1}
         # Run with existing CSV
         with patch.object(Path, "exists", return_value=True):
             with patch("pandas.read_csv", return_value=pd.DataFrame({"roi_90d": [0.1]})):
-                runpy.run_module("pipeline.fama_french", run_name="__main__")
+                runpy.run_path(ff_path, run_name="__main__")
 
         # Run when file not found
         with patch.object(Path, "exists", return_value=False):
-            runpy.run_module("pipeline.fama_french", run_name="__main__")
+            runpy.run_path(ff_path, run_name="__main__")
 
 
 def test_analyze_trade_deltas(tmp_path):
@@ -100,12 +101,14 @@ def test_analyze_trade_deltas(tmp_path):
 
 
 def test_monitor_main():
+    mon_path = str(Path(__file__).parent.parent / "pipeline" / "monitor.py")
     with patch("pandas.read_csv", return_value=pd.DataFrame({"member_name": ["Alice"], "transaction_date": ["2024-01-01"], "type": ["Purchase"]})):
         with patch.object(Path, "exists", return_value=True):
-            runpy.run_module("pipeline.monitor", run_name="__main__")
+            runpy.run_path(mon_path, run_name="__main__")
 
 
 def test_run_pipeline_main_execution(tmp_path):
+    rp_path = str(Path(__file__).parent.parent / "pipeline" / "run_pipeline.py")
     with patch("sys.argv", ["run_pipeline.py", "--senate-only"]):
         with patch("pipeline.senate_fetcher.SENATE_JSON_PATH") as mock_sen_path:
             with patch("pipeline.house_fetcher.HOUSE_JSON_PATH") as mock_house_path:
@@ -119,7 +122,7 @@ def test_run_pipeline_main_execution(tmp_path):
                             with patch("pipeline.senate_fetcher.get_senate_df", return_value=pd.DataFrame([{"chamber": "Senate"}])):
                                 with patch("pipeline.run_pipeline.get_senate_df", return_value=pd.DataFrame([{"chamber": "Senate"}])):
                                     with patch("pandas.DataFrame.to_csv"):
-                                        runpy.run_module("pipeline.run_pipeline", run_name="__main__")
+                                        runpy.run_path(rp_path, run_name="__main__")
 
 
 
