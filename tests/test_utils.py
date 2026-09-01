@@ -1,5 +1,6 @@
 import pandas as pd
 import pytest
+from pathlib import Path
 from utils.check_covid import run_check_covid
 from utils.mappings import clean_house_names as mappings_clean, update_flourish_export, party_map
 from utils.patch_code import clean_house_names as patch_clean
@@ -53,8 +54,9 @@ def test_flourish_two_columns(tmp_path):
 
 def test_main_guards_utils(tmp_path, monkeypatch):
     import runpy
+    root = Path(__file__).parent.parent
     # patch_code main
-    runpy.run_module("utils.patch_code", run_name="__main__")
+    runpy.run_path(str(root / "utils" / "patch_code.py"), run_name="__main__")
 
     # check_covid main
     trades_csv = tmp_path / "legislative_trades.csv"
@@ -72,7 +74,7 @@ def test_main_guards_utils(tmp_path, monkeypatch):
         "transaction_type": ["Sale"],
         "amount_avg": [100.0]
     }).to_csv(tmp_path / "data" / "legislative_trades.csv", index=False)
-    runpy.run_module("utils.check_covid", run_name="__main__")
+    runpy.run_path(str(root / "utils" / "check_covid.py"), run_name="__main__")
 
     # mappings main
     pd.DataFrame({
@@ -80,5 +82,4 @@ def test_main_guards_utils(tmp_path, monkeypatch):
         "Party": ["Democrat"],
         "2020": [100]
     }).to_csv(tmp_path / "data" / "flourish_racing_bar_export.csv", index=False)
-    runpy.run_module("utils.mappings", run_name="__main__")
-
+    runpy.run_path(str(root / "utils" / "mappings.py"), run_name="__main__")
