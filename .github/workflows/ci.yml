@@ -78,7 +78,13 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Node dependency audit
-        run: npm audit --audit-level=high
+        run: |
+          for i in 1 2 3; do
+            npm audit --audit-level=high && exit 0 || true
+            echo "npm audit failed or timed out (attempt $i/3), retrying in 5s..."
+            sleep 5
+          done
+          npm audit --audit-level=high
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
