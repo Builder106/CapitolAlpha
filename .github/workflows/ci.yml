@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -104,3 +104,31 @@ jobs:
             playwright-report/
             test-results/
           retention-days: 7
+
+  deploy:
+    name: Trigger Vercel deploy
+    needs: [secrets, playwright]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Trigger staging deploy hook
+        if: github.ref == 'refs/heads/staging'
+        env:
+          HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_STAGING }}
+        run: |
+          if [ -z "$HOOK_URL" ]; then
+            echo "::notice::VERCEL_DEPLOY_HOOK_STAGING is not set; skipping deployment"
+            exit 0
+          fi
+          curl -sS -f -X POST "$HOOK_URL"
+
+      - name: Trigger production deploy hook
+        if: github.ref == 'refs/heads/main'
+        env:
+          HOOK_URL: ${{ secrets.VERCEL_DEPLOY_HOOK_PROD }}
+        run: |
+          if [ -z "$HOOK_URL" ]; then
+            echo "::error::VERCEL_DEPLOY_HOOK_PROD is required but not set"
+            exit 1
+          fi
+          curl -sS -f -X POST "$HOOK_URL"
