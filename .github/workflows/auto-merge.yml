@@ -1,0 +1,54 @@
+name: Auto-Merge
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions: {}
+
+jobs:
+  dependabot:
+    if: github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: dependabot/fetch-metadata@v3
+        id: metadata
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Enable auto-merge for Dependabot
+        if: steps.metadata.outputs.update-type != 'version-update:semver-major'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  owner:
+    if: |
+      (github.event.pull_request.user.login == 'Builder106' || github.event.pull_request.user.login == github.repository_owner) &&
+      github.event.pull_request.base.ref == github.event.repository.default_branch &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Enable auto-merge for Owner
+        run: |
+          output=$(gh pr merge --auto --squash "$PR_URL" 2>&1) || {
+            case "$output" in
+              *"already in progress"*|*"already auto-merged"*|*"already merged"*|*"not open"*)
+                echo "Auto-merge already handled: $output"
+                exit 0
+                ;;
+              *)
+                echo "::error::$output"
+                exit 1
+                ;;
+            esac
+          }
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
